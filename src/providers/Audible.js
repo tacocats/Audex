@@ -1,9 +1,9 @@
 import axios from 'axios'
-import logger from '../logger'
-import { isValidASIN } from '../utils/index'
+import logger from '../logger.js'
+import { isValidASIN } from '../utils/index.js'
 
 class Audible {
-  #responseTimeout = 10000
+  #responseTimeout = 30000
 
   constructor() {
     this.regionMap = {
@@ -41,7 +41,24 @@ class Audible {
   }
 
   cleanResult(item) {
-    const { title, subtitle, asin, authors, narrators, publisherName, summary, releaseDate, image, genres, seriesPrimary, seriesSecondary, language, runtimeLengthMin, formatType, isbn } = item
+    const {
+      title,
+      subtitle,
+      asin,
+      authors,
+      narrators,
+      publisherName,
+      summary,
+      releaseDate,
+      image,
+      genres,
+      seriesPrimary,
+      seriesSecondary,
+      language,
+      runtimeLengthMin,
+      formatType,
+      isbn
+    } = item
 
     const series = []
     if (seriesPrimary) {
@@ -111,7 +128,7 @@ class Audible {
         return res.data
       })
       .catch((error) => {
-        logger.error('[Audible] ASIN search error', error.message)
+        logger.error(`[Audible] ASIN search error: ${error.message}`)
         return null
       })
   }
@@ -163,7 +180,7 @@ class Audible {
           return Promise.all(res.data.products.map((result) => this.asinSearch(result.asin, region, timeout)))
         })
         .catch((error) => {
-          logger.error('[Audible] query search error', error.message)
+          logger.error(`[Audible] query search error: ${error.message}`)
           return []
         })
     }

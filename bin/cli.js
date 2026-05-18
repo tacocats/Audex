@@ -1,19 +1,21 @@
 #!/usr/bin/env node
 
-import { program } from 'commander';
+import { program, Option } from 'commander'
+import { organizeCommand } from '../src/commands/organize.js'
 
 program
   .name('audex')
   .description('Audiobook Organizer')
   .version('1.0.0')
-  .requiredOption('-i, --input <dir>', 'input directory to scan');
+  .requiredOption('-i, --input <dir>', 'input directory to scan')
+  .addOption(new Option('-p, --provider <provider>', 'metadata provider').choices(['Audible', 'GoogleBooks', 'iTunes']).default('Audible'))
+  .addOption(
+    new Option('-l, --log-level <level>', 'log level').choices(['error', 'warn', 'info', 'http', 'verbose', 'debug']).default('info')
+  )
 
 program
-  .command('scan')
+  .command('organize')
   .description('Scan the input directory for audiobooks')
-  .action(() => {
-    const { input } = program.opts();
-    console.log(`Scanning: ${input}`);
-  });
+  .action(() => organizeCommand(program.opts()))
 
-program.parse();
+program.parse()
