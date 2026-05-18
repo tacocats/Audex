@@ -1,6 +1,6 @@
 import axios from 'axios'
-import logger from '../logger'
-import htmlSanitizer from '../utils/htmlSanitizer'
+import logger from '../logger.js'
+import { sanitize, stripAllTags } from '../utils/htmlSanitizer.js'
 
 /**
  * @typedef iTunesSearchParams
@@ -142,8 +142,8 @@ class iTunes {
       artistId: data.artistId || null,
       title: data.collectionName,
       artistName: data.artistName,
-      description: htmlSanitizer.sanitize(data.description || ''),
-      descriptionPlain: htmlSanitizer.stripAllTags(data.description || ''),
+      description: sanitize(data.description || ''),
+      descriptionPlain: stripAllTags(data.description || ''),
       releaseDate: data.releaseDate,
       genres: data.genres || [],
       cover: this.getCoverArtwork(data),
