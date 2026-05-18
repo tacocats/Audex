@@ -5,7 +5,6 @@ import iTunes from '../providers/iTunes'
 import Audnexus from '../providers/Audnexus'
 import FantLab from '../providers/FantLab'
 import AudiobookCovers from '../providers/AudiobookCovers'
-import CustomProviderAdapter from '../providers/CustomProviderAdapter'
 import logger from '../logger'
 import { levenshteinDistance, levenshteinSimilarity, escapeRegExp, isValidASIN } from '../utils/index'
 import htmlSanitizer from '../utils/htmlSanitizer'
@@ -21,7 +20,6 @@ class BookFinder {
     this.audnexus = new Audnexus()
     this.fantLab = new FantLab()
     this.audiobookCovers = new AudiobookCovers()
-    this.customProviderAdapter = new CustomProviderAdapter()
 
     this.providers = ['google', 'itunes', 'openlibrary', 'fantlab', 'audiobookcovers', 'audible', 'audible.ca', 'audible.uk', 'audible.au', 'audible.fr', 'audible.de', 'audible.jp', 'audible.it', 'audible.in', 'audible.es']
 
@@ -194,25 +192,6 @@ class BookFinder {
     return books
   }
 
-  /**
-   *
-   * @param {string} title
-   * @param {string} author
-   * @param {string} isbn
-   * @param {string} providerSlug
-   * @returns {Promise<Object[]>}
-   */
-  async getCustomProviderResults(title, author, isbn, providerSlug) {
-    try {
-      const books = await this.customProviderAdapter.search(title, author, isbn, providerSlug, 'book', this.#providerResponseTimeout)
-      if (this.verbose) logger.debug(`Custom provider '${providerSlug}' Search Results: ${books.length || 0}`)
-      return books
-    } catch (error) {
-      logger.error(`Error searching Custom provider '${providerSlug}':`, error)
-      return []
-    }
-  }
-
   static TitleCandidates = class {
     constructor(cleanAuthor) {
       this.candidates = new Set()
@@ -377,11 +356,6 @@ class BookFinder {
     const maxAuthorDistance = !isNaN(options.authorDistance) ? Number(options.authorDistance) : 4
     const maxFuzzySearches = !isNaN(options.maxFuzzySearches) ? Number(options.maxFuzzySearches) : 5
     let numFuzzySearches = 0
-
-    // Custom providers are assumed to be correct
-    if (provider.startsWith('custom-')) {
-      return this.getCustomProviderResults(title, author, isbn, provider)
-    }
 
     if (!title) return books
 
