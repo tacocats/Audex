@@ -1,7 +1,6 @@
 
-
 // https://github.com/RateGravity/parse-full-name/blob/master/index.js
-module.exports = (nameToParse, partToReturn, fixCase, stopOnError, useLongLists) => {
+export default (nameToParse, partToReturn, fixCase, stopOnError, useLongLists) => {
 
   var i, j, k, l, m, n, part, comma, titleList, suffixList, prefixList, regex,
     partToCheck, partFound, partsFoundCount, firstComma, remainingCommas,
@@ -162,7 +161,7 @@ module.exports = (nameToParse, partToReturn, fixCase, stopOnError, useLongLists)
   }
 
   // Nickname: remove and store parts with surrounding punctuation as nicknames
-  regex = /\s(?:[‘’']([^‘’']+)[‘’']|[“”"]([^“”"]+)[“”"]|\[([^\]]+)\]|\(([^\)]+)\)),?\s/g;
+  regex = /\s(?:[''']([^''']+)[''']|["""]([^"""]+)["""]|\[([^\]]+)\]|\(([^\)]+)\)),?\s/g;
   partFound = (' ' + nameToParse + ' ').match(regex);
   if (partFound) partsFound = partsFound.concat(partFound);
   partsFoundCount = partsFound.length;

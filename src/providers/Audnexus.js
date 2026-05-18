@@ -1,8 +1,7 @@
-const axios = require('axios').default
-const Throttle = require('p-throttle')
-const logger = require('../logger')
-const { levenshteinDistance } = require('../utils/index')
-const { isValidASIN } = require('../utils/index')
+import axios from 'axios'
+import pThrottle from 'p-throttle'
+import logger from '../logger'
+import { levenshteinDistance, isValidASIN } from '../utils/index'
 
 /**
  * @typedef AuthorSearchObj
@@ -25,7 +24,7 @@ class Audnexus {
 
     // Rate limit is 100 requests per minute.
     // @see https://github.com/laxamentumtech/audnexus#-deployment-
-    this.limiter = Throttle({
+    this.limiter = pThrottle({
       // Setting the limit to 1 allows for a short pause between requests that is imperceptible to the end user.
       // A larger limit will grab blocks faster and then wait for the alloted time(interval) before
       // fetching another batch, but with a discernable pause from the user perspective.
@@ -184,4 +183,4 @@ class Audnexus {
   }
 }
 
-module.exports = Audnexus
+export default Audnexus

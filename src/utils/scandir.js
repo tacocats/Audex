@@ -1,8 +1,8 @@
-const Path = require('path')
-const { filePathToPOSIX } = require('./fileUtils')
-const globals = require('./globals')
-const LibraryFile = require('../objects/files/LibraryFile')
-const parseNameString = require('./parsers/parseNameString')
+import Path from 'path'
+import { filePathToPOSIX } from './fileUtils'
+import globals from './globals'
+import LibraryFile from '../objects/files/LibraryFile'
+import * as parseNameString from './parsers/parseNameString'
 
 /**
  * @typedef LibraryItemFilenameMetadata
@@ -30,13 +30,12 @@ function isScannableNonMediaFile(ext) {
   return globals.TextFileTypes.includes(extclean) || globals.MetadataFileTypes.includes(extclean) || globals.SupportedImageTypes.includes(extclean)
 }
 
-function checkFilepathIsAudioFile(filepath) {
+export function checkFilepathIsAudioFile(filepath) {
   const ext = Path.extname(filepath)
   if (!ext) return false
   const extclean = ext.slice(1).toLowerCase()
   return globals.SupportedAudioTypes.includes(extclean)
 }
-module.exports.checkFilepathIsAudioFile = checkFilepathIsAudioFile
 
 /**
  * @param {string} mediaType
@@ -45,7 +44,7 @@ module.exports.checkFilepathIsAudioFile = checkFilepathIsAudioFile
  * @param {boolean} [includeNonMediaFiles=false] - Used by the watcher to re-scan when covers/metadata files are added/removed
  * @returns {Record<string,string[]>} map of files grouped into potential libarary item dirs
  */
-function groupFileItemsIntoLibraryItemDirs(mediaType, fileItems, audiobooksOnly, includeNonMediaFiles = false) {
+export function groupFileItemsIntoLibraryItemDirs(mediaType, fileItems, audiobooksOnly, includeNonMediaFiles = false) {
   // Step 1: Filter out non-book-media files in root dir (with depth of 0)
   const itemsFiltered = fileItems.filter((i) => {
     return i.deep > 0 || (mediaType === 'book' && isMediaFile(mediaType, i.extension, audiobooksOnly))
@@ -119,7 +118,6 @@ function groupFileItemsIntoLibraryItemDirs(mediaType, fileItems, audiobooksOnly,
   })
   return libraryItemGroup
 }
-module.exports.groupFileItemsIntoLibraryItemDirs = groupFileItemsIntoLibraryItemDirs
 
 /**
  * Get LibraryFile from filepath
@@ -127,7 +125,7 @@ module.exports.groupFileItemsIntoLibraryItemDirs = groupFileItemsIntoLibraryItem
  * @param {string[]} files
  * @returns {import('../objects/files/LibraryFile')}
  */
-function buildLibraryFile(libraryItemPath, files) {
+export function buildLibraryFile(libraryItemPath, files) {
   return Promise.all(
     files.map(async (file) => {
       const filePath = Path.posix.join(libraryItemPath, file)
@@ -137,7 +135,6 @@ function buildLibraryFile(libraryItemPath, files) {
     })
   )
 }
-module.exports.buildLibraryFile = buildLibraryFile
 
 /**
  * Get details parsed from filenames
@@ -146,12 +143,12 @@ module.exports.buildLibraryFile = buildLibraryFile
  * @param {boolean} parseSubtitle
  * @returns {LibraryItemFilenameMetadata}
  */
-function getBookDataFromDir(relPath, parseSubtitle = false) {
+export function getBookDataFromDir(relPath, parseSubtitle = false) {
   const splitDir = relPath.split('/')
 
   var folder = splitDir.pop() // Audio files will always be in the directory named for the title
-  series = splitDir.length > 1 ? splitDir.pop() : null // If there are at least 2 more directories, next furthest will be the series
-  author = splitDir.length > 0 ? splitDir.pop() : null // There could be many more directories, but only the top 3 are used for naming /author/series/title/
+  var series = splitDir.length > 1 ? splitDir.pop() : null // If there are at least 2 more directories, next furthest will be the series
+  var author = splitDir.length > 0 ? splitDir.pop() : null // There could be many more directories, but only the top 3 are used for naming /author/series/title/
 
   // The  may contain various other pieces of metadata, these functions extract it.
   var [folder, asin] = getASIN(folder)
@@ -171,7 +168,6 @@ function getBookDataFromDir(relPath, parseSubtitle = false) {
     publishedYear
   }
 }
-module.exports.getBookDataFromDir = getBookDataFromDir
 
 /**
  * Extract narrator from folder name
@@ -234,7 +230,7 @@ function getSequence(folder) {
 function getPublishedYear(folder) {
   var publishedYear = null
 
-  pattern = /^ *\(?([0-9]{4})\)? * - *(.+)/ //Matches #### - title or (####) - title
+  var pattern = /^ *\(?([0-9]{4})\)? * - *(.+)/ //Matches #### - title or (####) - title
   var match = folder.match(pattern)
   if (match) {
     publishedYear = match[1]
@@ -296,7 +292,7 @@ function getPodcastDataFromDir(relPath) {
  * @param {string} relPath
  * @returns {{ mediaMetadata: LibraryItemFilenameMetadata, relPath: string, path: string}}
  */
-function getDataFromMediaDir(libraryMediaType, folderPath, relPath) {
+export function getDataFromMediaDir(libraryMediaType, folderPath, relPath) {
   relPath = filePathToPOSIX(relPath)
   let fullPath = Path.posix.join(folderPath, relPath)
   let mediaMetadata = null
@@ -314,4 +310,3 @@ function getDataFromMediaDir(libraryMediaType, folderPath, relPath) {
     path: fullPath
   }
 }
-module.exports.getDataFromMediaDir = getDataFromMediaDir

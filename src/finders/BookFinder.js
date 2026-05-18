@@ -1,14 +1,14 @@
-const OpenLibrary = require('../providers/OpenLibrary')
-const GoogleBooks = require('../providers/GoogleBooks')
-const Audible = require('../providers/Audible')
-const iTunes = require('../providers/iTunes')
-const Audnexus = require('../providers/Audnexus')
-const FantLab = require('../providers/FantLab')
-const AudiobookCovers = require('../providers/AudiobookCovers')
-const CustomProviderAdapter = require('../providers/CustomProviderAdapter')
-const logger = require('../logger')
-const { levenshteinDistance, levenshteinSimilarity, escapeRegExp, isValidASIN } = require('../utils/index')
-const htmlSanitizer = require('../utils/htmlSanitizer')
+import OpenLibrary from '../providers/OpenLibrary'
+import GoogleBooks from '../providers/GoogleBooks'
+import Audible from '../providers/Audible'
+import iTunes from '../providers/iTunes'
+import Audnexus from '../providers/Audnexus'
+import FantLab from '../providers/FantLab'
+import AudiobookCovers from '../providers/AudiobookCovers'
+import CustomProviderAdapter from '../providers/CustomProviderAdapter'
+import logger from '../logger'
+import { levenshteinDistance, levenshteinSimilarity, escapeRegExp, isValidASIN } from '../utils/index'
+import htmlSanitizer from '../utils/htmlSanitizer'
 
 class BookFinder {
   #providerResponseTimeout = 10000
@@ -643,7 +643,8 @@ class BookFinder {
     return this.audnexus.getChaptersByASIN(asin, region)
   }
 }
-module.exports = new BookFinder()
+
+export default new BookFinder()
 
 function hasSubtitle(title) {
   return title.includes(': ') || title.includes(' - ')

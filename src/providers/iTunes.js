@@ -1,6 +1,6 @@
-const axios = require('axios')
-const logger = require('../logger')
-const htmlSanitizer = require('../utils/htmlSanitizer')
+import axios from 'axios'
+import logger from '../logger'
+import htmlSanitizer from '../utils/htmlSanitizer'
 
 /**
  * @typedef iTunesSearchParams
@@ -167,4 +167,5 @@ class iTunes {
     })
   }
 }
-module.exports = iTunes
+
+export default iTunes

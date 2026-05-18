@@ -1,5 +1,5 @@
-const axios = require('axios').default
-const logger = require('../logger')
+import axios from 'axios'
+import logger from '../logger'
 
 class OpenLibrary {
   #responseTimeout = 10000
@@ -119,4 +119,5 @@ class OpenLibrary {
     return searchDocs
   }
 }
-module.exports = OpenLibrary
+
+export default OpenLibrary

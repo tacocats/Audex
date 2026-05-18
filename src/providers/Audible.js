@@ -1,6 +1,6 @@
-const axios = require('axios').default
-const logger = require('../logger')
-const { isValidASIN } = require('../utils/index')
+import axios from 'axios'
+import logger from '../logger'
+import { isValidASIN } from '../utils/index'
 
 class Audible {
   #responseTimeout = 10000
@@ -171,4 +171,4 @@ class Audible {
   }
 }
 
-module.exports = Audible
+export default Audible

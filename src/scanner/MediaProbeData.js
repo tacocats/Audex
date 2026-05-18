@@ -1,4 +1,4 @@
-const AudioMetaTags = require('../objects/metadata/AudioMetaTags')
+import AudioMetaTags from '../objects/metadata/AudioMetaTags'
 
 class MediaProbeData {
   constructor(probeData) {
@@ -64,4 +64,5 @@ class MediaProbeData {
     this.audioMetaTags.setData(data.tags)
   }
 }
-module.exports = MediaProbeData
+
+export default MediaProbeData

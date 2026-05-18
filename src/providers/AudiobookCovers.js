@@ -1,5 +1,5 @@
-const axios = require('axios')
-const logger = require('../logger')
+import axios from 'axios'
+import logger from '../logger'
 
 class AudiobookCovers {
   #responseTimeout = 10000
@@ -30,4 +30,5 @@ class AudiobookCovers {
     return items.map((item) => ({ cover: item.versions.png.original }))
   }
 }
-module.exports = AudiobookCovers
+
+export default AudiobookCovers

@@ -1,7 +1,7 @@
-const axios = require('axios').default
-const Database = require('../Database')
-const logger = require('../logger')
-const htmlSanitizer = require('../utils/htmlSanitizer')
+import axios from 'axios'
+import Database from '../Database'
+import logger from '../logger'
+import htmlSanitizer from '../utils/htmlSanitizer'
 
 class CustomProviderAdapter {
   #responseTimeout = 10000
@@ -145,4 +145,4 @@ class CustomProviderAdapter {
   }
 }
 
-module.exports = CustomProviderAdapter
+export default CustomProviderAdapter

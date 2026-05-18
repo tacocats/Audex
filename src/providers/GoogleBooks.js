@@ -1,5 +1,5 @@
-const axios = require('axios')
-const logger = require('../logger')
+import axios from 'axios'
+import logger from '../logger'
 
 class GoogleBooks {
   #responseTimeout = 10000
@@ -74,4 +74,4 @@ class GoogleBooks {
   }
 }
 
-module.exports = GoogleBooks
+export default GoogleBooks

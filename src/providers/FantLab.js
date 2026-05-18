@@ -1,5 +1,5 @@
-const axios = require('axios')
-const logger = require('../logger')
+import axios from 'axios'
+import logger from '../logger'
 
 class FantLab {
   #responseTimeout = 10000
@@ -201,4 +201,4 @@ class FantLab {
   }
 }
 
-module.exports = FantLab
+export default FantLab

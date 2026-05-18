@@ -1,7 +1,7 @@
-const axios = require('axios')
-const packageJson = require('../../package.json')
-const logger = require('../logger')
-const { isNullOrNaN } = require('../utils/index')
+import axios from 'axios'
+import packageJson from '../../package.json' with { type: 'json' }
+import logger from '../logger'
+import { isNullOrNaN } from '../utils/index'
 
 class MusicBrainz {
   constructor() { }
@@ -48,4 +48,5 @@ class MusicBrainz {
     })
   }
 }
-module.exports = MusicBrainz
+
+export default MusicBrainz
