@@ -1,5 +1,5 @@
 const axios = require('axios')
-const Logger = require('../Logger')
+const logger = require('../logger')
 
 class GoogleBooks {
   #responseTimeout = 10000
@@ -57,7 +57,7 @@ class GoogleBooks {
       queryString += `+inauthor:${author}`
     }
     const url = `https://www.googleapis.com/books/v1/volumes?${queryString}`
-    Logger.debug(`[GoogleBooks] Search url: ${url}`)
+    logger.debug(`[GoogleBooks] Search url: ${url}`)
     const items = await axios
       .get(url, {
         timeout
@@ -67,7 +67,7 @@ class GoogleBooks {
         return res.data.items
       })
       .catch((error) => {
-        Logger.error('[GoogleBooks] Volume search error', error.message)
+        logger.error('[GoogleBooks] Volume search error', error.message)
         return []
       })
     return items.map((item) => this.cleanResult(item))

@@ -1,5 +1,5 @@
 const axios = require('axios')
-const Logger = require('../Logger')
+const logger = require('../logger')
 const htmlSanitizer = require('../utils/htmlSanitizer')
 
 /**
@@ -41,7 +41,7 @@ class iTunes {
    */
   search(options, timeout = this.#responseTimeout) {
     if (!options.term) {
-      Logger.error('[iTunes] Invalid search options - no term')
+      logger.error('[iTunes] Invalid search options - no term')
       return []
     }
     if (!timeout || isNaN(timeout)) timeout = this.#responseTimeout
@@ -63,7 +63,7 @@ class iTunes {
         return response.data.results || []
       })
       .catch((error) => {
-        Logger.error(`[iTunes] search request error`, error.message)
+        logger.error(`[iTunes] search request error`, error.message)
         return []
       })
   }

@@ -1,5 +1,5 @@
 const axios = require('axios').default
-const Logger = require('../Logger')
+const logger = require('../logger')
 const { isValidASIN } = require('../utils/index')
 
 class Audible {
@@ -35,7 +35,7 @@ class Audible {
     let numberFound = sequence.match(/\.\d+|\d+(?:\.\d+)?/)
     let updatedSequence = numberFound ? numberFound[0] : sequence
     if (sequence !== updatedSequence) {
-      Logger.debug(`[Audible] Series "${seriesName}" sequence was cleaned from "${sequence}" to "${updatedSequence}"`)
+      logger.debug(`[Audible] Series "${seriesName}" sequence was cleaned from "${sequence}" to "${updatedSequence}"`)
     }
     return updatedSequence
   }
@@ -101,7 +101,7 @@ class Audible {
     asin = encodeURIComponent(asin.toUpperCase())
     var regionQuery = region ? `?region=${region}` : ''
     var url = `https://api.audnex.us/books/${asin}${regionQuery}`
-    Logger.debug(`[Audible] ASIN url: ${url}`)
+    logger.debug(`[Audible] ASIN url: ${url}`)
     return axios
       .get(url, {
         timeout
@@ -111,7 +111,7 @@ class Audible {
         return res.data
       })
       .catch((error) => {
-        Logger.error('[Audible] ASIN search error', error.message)
+        logger.error('[Audible] ASIN search error', error.message)
         return null
       })
   }
@@ -127,7 +127,7 @@ class Audible {
    */
   async search(title, author, asin, region, timeout = this.#responseTimeout) {
     if (region && !this.regionMap[region]) {
-      Logger.error(`[Audible] search: Invalid region ${region}`)
+      logger.error(`[Audible] search: Invalid region ${region}`)
       region = ''
     }
     if (!timeout || isNaN(timeout)) timeout = this.#responseTimeout
@@ -153,7 +153,7 @@ class Audible {
       const queryString = new URLSearchParams(queryObj).toString()
       const tld = region ? this.regionMap[region] : '.com'
       const url = `https://api.audible${tld}/1.0/catalog/products?${queryString}`
-      Logger.debug(`[Audible] Search url: ${url}`)
+      logger.debug(`[Audible] Search url: ${url}`)
       items = await axios
         .get(url, {
           timeout
@@ -163,7 +163,7 @@ class Audible {
           return Promise.all(res.data.products.map((result) => this.asinSearch(result.asin, region, timeout)))
         })
         .catch((error) => {
-          Logger.error('[Audible] query search error', error.message)
+          logger.error('[Audible] query search error', error.message)
           return []
         })
     }

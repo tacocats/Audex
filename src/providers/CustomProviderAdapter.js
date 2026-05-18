@@ -1,6 +1,6 @@
 const axios = require('axios').default
 const Database = require('../Database')
-const Logger = require('../Logger')
+const logger = require('../logger')
 const htmlSanitizer = require('../utils/htmlSanitizer')
 
 class CustomProviderAdapter {
@@ -42,7 +42,7 @@ class CustomProviderAdapter {
     const queryString = new URLSearchParams(queryObj).toString()
 
     const url = `${provider.url}/search?${queryString}`
-    Logger.debug(`[CustomMetadataProvider] Search url: ${url}`)
+    logger.debug(`[CustomMetadataProvider] Search url: ${url}`)
 
     // Setup headers
     const axiosOptions = {
@@ -61,7 +61,7 @@ class CustomProviderAdapter {
         return res.data.matches
       })
       .catch((error) => {
-        Logger.error('[CustomMetadataProvider] Search error', error.message)
+        logger.error('[CustomMetadataProvider] Search error', error.message)
         return []
       })
 

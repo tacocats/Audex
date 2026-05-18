@@ -6,7 +6,7 @@ const Audnexus = require('../providers/Audnexus')
 const FantLab = require('../providers/FantLab')
 const AudiobookCovers = require('../providers/AudiobookCovers')
 const CustomProviderAdapter = require('../providers/CustomProviderAdapter')
-const Logger = require('../Logger')
+const logger = require('../logger')
 const { levenshteinDistance, levenshteinSimilarity, escapeRegExp, isValidASIN } = require('../utils/index')
 const htmlSanitizer = require('../utils/htmlSanitizer')
 
@@ -31,7 +31,7 @@ class BookFinder {
   async findByISBN(isbn) {
     var book = await this.openLibrary.isbnLookup(isbn)
     if (book.errorCode) {
-      Logger.error('Book not found')
+      logger.error('Book not found')
     }
     return book
   }
@@ -76,18 +76,18 @@ class BookFinder {
       .filter((b) => {
         if (b.includesTitle) {
           // If search title was found in result title then skip over leven distance check
-          if (this.verbose) Logger.debug(`Exact title was included in "${b.title}", Search: "${b.includesTitle}"`)
+          if (this.verbose) logger.debug(`Exact title was included in "${b.title}", Search: "${b.includesTitle}"`)
         } else if (b.titleDistance > maxTitleDistance) {
-          if (this.verbose) Logger.debug(`Filtering out search result title distance = ${b.titleDistance}: "${b.cleanedTitle}"/"${searchTitle}"`)
+          if (this.verbose) logger.debug(`Filtering out search result title distance = ${b.titleDistance}: "${b.cleanedTitle}"/"${searchTitle}"`)
           return false
         }
 
         if (author) {
           if (b.includesAuthor) {
             // If search author was found in result author then skip over leven distance check
-            if (this.verbose) Logger.debug(`Exact author was included in "${b.author}", Search: "${b.includesAuthor}"`)
+            if (this.verbose) logger.debug(`Exact author was included in "${b.author}", Search: "${b.includesAuthor}"`)
           } else if (b.authorDistance > maxAuthorDistance) {
-            if (this.verbose) Logger.debug(`Filtering out search result "${b.author}", author distance = ${b.authorDistance}: "${b.author}"/"${author}"`)
+            if (this.verbose) logger.debug(`Filtering out search result "${b.author}", author distance = ${b.authorDistance}: "${b.author}"/"${author}"`)
             return false
           }
         }
@@ -108,14 +108,14 @@ class BookFinder {
    */
   async getOpenLibResults(title, author, maxTitleDistance, maxAuthorDistance) {
     var books = await this.openLibrary.searchTitle(title, this.#providerResponseTimeout)
-    if (this.verbose) Logger.debug(`OpenLib Book Search Results: ${books.length || 0}`)
+    if (this.verbose) logger.debug(`OpenLib Book Search Results: ${books.length || 0}`)
     if (books.errorCode) {
-      Logger.error(`OpenLib Search Error ${books.errorCode}`)
+      logger.error(`OpenLib Search Error ${books.errorCode}`)
       return []
     }
     var booksFiltered = this.filterSearchResults(books, title, author, maxTitleDistance, maxAuthorDistance)
     if (!booksFiltered.length && books.length) {
-      if (this.verbose) Logger.debug(`Search has ${books.length} matches, but no close title matches`)
+      if (this.verbose) logger.debug(`Search has ${books.length} matches, but no close title matches`)
     }
     booksFiltered.sort((a, b) => {
       return a.totalDistance - b.totalDistance
@@ -132,9 +132,9 @@ class BookFinder {
    */
   async getGoogleBooksResults(title, author) {
     var books = await this.googleBooks.search(title, author, this.#providerResponseTimeout)
-    if (this.verbose) Logger.debug(`GoogleBooks Book Search Results: ${books.length || 0}`)
+    if (this.verbose) logger.debug(`GoogleBooks Book Search Results: ${books.length || 0}`)
     if (books.errorCode) {
-      Logger.error(`GoogleBooks Search Error ${books.errorCode}`)
+      logger.error(`GoogleBooks Search Error ${books.errorCode}`)
       return []
     }
     // Google has good sort
@@ -149,9 +149,9 @@ class BookFinder {
    */
   async getFantLabResults(title, author) {
     var books = await this.fantLab.search(title, author, this.#providerResponseTimeout)
-    if (this.verbose) Logger.debug(`FantLab Book Search Results: ${books.length || 0}`)
+    if (this.verbose) logger.debug(`FantLab Book Search Results: ${books.length || 0}`)
     if (books.errorCode) {
-      Logger.error(`FantLab Search Error ${books.errorCode}`)
+      logger.error(`FantLab Search Error ${books.errorCode}`)
       return []
     }
 
@@ -165,7 +165,7 @@ class BookFinder {
    */
   async getAudiobookCoversResults(search) {
     const covers = await this.audiobookCovers.search(search, this.#providerResponseTimeout)
-    if (this.verbose) Logger.debug(`AudiobookCovers Search Results: ${covers.length || 0}`)
+    if (this.verbose) logger.debug(`AudiobookCovers Search Results: ${covers.length || 0}`)
     return covers || []
   }
 
@@ -189,7 +189,7 @@ class BookFinder {
   async getAudibleResults(title, author, asin, provider) {
     const region = provider.includes('.') ? provider.split('.').pop() : ''
     const books = await this.audible.search(title, author, asin, region, this.#providerResponseTimeout)
-    if (this.verbose) Logger.debug(`Audible Book Search Results: ${books.length || 0}`)
+    if (this.verbose) logger.debug(`Audible Book Search Results: ${books.length || 0}`)
     if (!books) return []
     return books
   }
@@ -205,10 +205,10 @@ class BookFinder {
   async getCustomProviderResults(title, author, isbn, providerSlug) {
     try {
       const books = await this.customProviderAdapter.search(title, author, isbn, providerSlug, 'book', this.#providerResponseTimeout)
-      if (this.verbose) Logger.debug(`Custom provider '${providerSlug}' Search Results: ${books.length || 0}`)
+      if (this.verbose) logger.debug(`Custom provider '${providerSlug}' Search Results: ${books.length || 0}`)
       return books
     } catch (error) {
-      Logger.error(`Error searching Custom provider '${providerSlug}':`, error)
+      logger.error(`Error searching Custom provider '${providerSlug}':`, error)
       return []
     }
   }
@@ -276,8 +276,8 @@ class BookFinder {
         const positionDiff = this.positions[a] - this.positions[b]
         return positionDiff // candidates with same priority always have different positions
       })
-      Logger.debug(`[${this.constructor.name}] Found ${candidates.length} fuzzy title candidates`)
-      Logger.debug(candidates)
+      logger.debug(`[${this.constructor.name}] Found ${candidates.length} fuzzy title candidates`)
+      logger.debug(candidates)
       return candidates
     }
 
@@ -349,8 +349,8 @@ class BookFinder {
       if (!filteredCandidates.length && this.cleanAuthor) filteredCandidates.push(this.agressivelyCleanAuthor)
       // Always add an empty author candidate
       filteredCandidates.push('')
-      Logger.debug(`[${this.constructor.name}] Found ${filteredCandidates.length} fuzzy author candidates`)
-      Logger.debug(filteredCandidates)
+      logger.debug(`[${this.constructor.name}] Found ${filteredCandidates.length} fuzzy author candidates`)
+      logger.debug(filteredCandidates)
       return filteredCandidates
     }
 
@@ -496,7 +496,7 @@ class BookFinder {
         // durationDiff > 10 - Score is 0.0
         durationScore = 0.0
       }
-      Logger.debug(`[BookFinder] Duration diff: ${durationDiff}, durationScore: ${durationScore}`)
+      logger.debug(`[BookFinder] Duration diff: ${durationDiff}, durationScore: ${durationScore}`)
     } else {
       // Default score if library item duration or book duration is not available
       durationScore = 0.1
@@ -508,7 +508,7 @@ class BookFinder {
       const normBookTitle = `${cleanTitle}${cleanSubtitle}`
       const normTitleQuery = cleanTitleForCompares(titleQuery, keepSubtitle)
       const titleSimilarity = levenshteinSimilarity(normTitleQuery, normBookTitle)
-      Logger.debug(`[BookFinder] keepSubtitle: ${keepSubtitle}, normBookTitle: ${normBookTitle}, normTitleQuery: ${normTitleQuery}, titleSimilarity: ${titleSimilarity}`)
+      logger.debug(`[BookFinder] keepSubtitle: ${keepSubtitle}, normBookTitle: ${normBookTitle}, normTitleQuery: ${normTitleQuery}, titleSimilarity: ${titleSimilarity}`)
       return titleSimilarity
     }
     const titleQueryHasSubtitle = hasSubtitle(actualTitleQuery)
@@ -533,14 +533,14 @@ class BookFinder {
           authorScore = 0.0
         } else {
           let maxPartScore = levenshteinSimilarity(normAuthorQuery, normBookAuthor)
-          Logger.debug(`[BookFinder] normAuthorQuery: ${normAuthorQuery}, normBookAuthor: ${normBookAuthor}, similarity: ${maxPartScore}`)
+          logger.debug(`[BookFinder] normAuthorQuery: ${normAuthorQuery}, normBookAuthor: ${normBookAuthor}, similarity: ${maxPartScore}`)
           if (validBookAuthorParts.length > 1 || normBookAuthor.includes(',')) {
             validBookAuthorParts.forEach((part) => {
               // part is guaranteed to be non-empty here
               // cleanedQueryAuthorForScore is also guaranteed non-empty here.
               // levenshteinDistance lowercases by default, but part is already lowercased.
               const similarity = levenshteinSimilarity(normAuthorQuery, part)
-              Logger.debug(`[BookFinder] normAuthorQuery: ${normAuthorQuery}, bookAuthorPart: ${part}, similarity: ${similarity}`)
+              logger.debug(`[BookFinder] normAuthorQuery: ${normAuthorQuery}, bookAuthorPart: ${part}, similarity: ${similarity}`)
               const currentPartScore = similarity
               maxPartScore = Math.max(maxPartScore, currentPartScore)
             })
@@ -558,9 +558,9 @@ class BookFinder {
     const W_TITLE = 0.2
     const W_AUTHOR = 0.1
 
-    Logger.debug(`[BookFinder] Duration score: ${durationScore}, Title score: ${titleScore}, Author score: ${authorScore}`)
+    logger.debug(`[BookFinder] Duration score: ${durationScore}, Title score: ${titleScore}, Author score: ${authorScore}`)
     const confidence = W_DURATION * durationScore + W_TITLE * titleScore + W_AUTHOR * authorScore
-    Logger.debug(`[BookFinder] Confidence: ${confidence}`)
+    logger.debug(`[BookFinder] Confidence: ${confidence}`)
     return Math.max(0, Math.min(1, confidence))
   }
 
@@ -576,7 +576,7 @@ class BookFinder {
    * @returns {Promise<Object[]>}
    */
   async runSearch(title, author, provider, asin, maxTitleDistance, maxAuthorDistance) {
-    Logger.debug(`Book Search: title: "${title}", author: "${author || ''}", provider: ${provider}`)
+    logger.debug(`Book Search: title: "${title}", author: "${author || ''}", provider: ${provider}`)
 
     let books = []
 
@@ -611,7 +611,7 @@ class BookFinder {
     if (provider === 'all') {
       for (const providerString of this.providers) {
         const providerResults = await this.search(null, providerString, title, author, options)
-        Logger.debug(`[BookFinder] Found ${providerResults.length} covers from ${providerString}`)
+        logger.debug(`[BookFinder] Found ${providerResults.length} covers from ${providerString}`)
         searchResults.push(...providerResults)
       }
     } else if (provider === 'best') {
@@ -619,13 +619,13 @@ class BookFinder {
       const bestProviders = ['google', 'fantlab', 'audible']
       for (const providerString of bestProviders) {
         const providerResults = await this.search(null, providerString, title, author, options)
-        Logger.debug(`[BookFinder] Found ${providerResults.length} covers from ${providerString}`)
+        logger.debug(`[BookFinder] Found ${providerResults.length} covers from ${providerString}`)
         searchResults.push(...providerResults)
       }
     } else {
       searchResults = await this.search(null, provider, title, author, options)
     }
-    Logger.debug(`[BookFinder] FindCovers search results: ${searchResults.length}`)
+    logger.debug(`[BookFinder] FindCovers search results: ${searchResults.length}`)
 
     const covers = []
     searchResults.forEach((result) => {
@@ -661,7 +661,7 @@ function replaceAccentedChars(str) {
   try {
     return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
   } catch (error) {
-    Logger.error('[BookFinder] str normalize error', error)
+    logger.error('[BookFinder] str normalize error', error)
     return str
   }
 }

@@ -1,5 +1,5 @@
 const axios = require('axios')
-const Logger = require('../Logger')
+const logger = require('../logger')
 
 class FantLab {
   #responseTimeout = 10000
@@ -39,7 +39,7 @@ class FantLab {
       searchString += encodeURIComponent(' ' + author)
     }
     const url = `${this._baseUrl}/search-works?q=${searchString}&page=1&onlymatches=1`
-    Logger.debug(`[FantLab] Search url: ${url}`)
+    logger.debug(`[FantLab] Search url: ${url}`)
     const items = await axios
       .get(url, {
         timeout
@@ -48,7 +48,7 @@ class FantLab {
         return res.data || []
       })
       .catch((error) => {
-        Logger.error('[FantLab] search error', error.message)
+        logger.error('[FantLab] search error', error.message)
         return []
       })
 
@@ -77,7 +77,7 @@ class FantLab {
         return resp.data || null
       })
       .catch((error) => {
-        Logger.error(`[FantLab] work info request for url "${url}" error`, error.message)
+        logger.error(`[FantLab] work info request for url "${url}" error`, error.message)
         return null
       })
 
@@ -193,7 +193,7 @@ class FantLab {
         return resp.data || null
       })
       .catch((error) => {
-        Logger.error(`[FantLab] search cover from edition with url "${url}" error`, error.message)
+        logger.error(`[FantLab] search cover from edition with url "${url}" error`, error.message)
         return null
       })
 

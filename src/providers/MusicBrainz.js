@@ -1,6 +1,6 @@
 const axios = require('axios')
 const packageJson = require('../../package.json')
-const Logger = require('../Logger')
+const logger = require('../logger')
 const { isNullOrNaN } = require('../utils/index')
 
 class MusicBrainz {
@@ -26,7 +26,7 @@ class MusicBrainz {
       luceneParts.push(`release:${options.album}`)
     }
     if (!luceneParts.length) {
-      Logger.error(`[MusicBrainz] Invalid search options - must have at least one of artist, isrc, title, album`)
+      logger.error(`[MusicBrainz] Invalid search options - must have at least one of artist, isrc, title, album`)
       return []
     }
 
@@ -43,7 +43,7 @@ class MusicBrainz {
     return axios.get('https://musicbrainz.org/ws/2/recording', { params: query }, config).then((response) => {
       return response.data.recordings || []
     }).catch((error) => {
-      Logger.error(`[MusicBrainz] search request error`, error)
+      logger.error(`[MusicBrainz] search request error`, error)
       return []
     })
   }

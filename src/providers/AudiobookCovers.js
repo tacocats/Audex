@@ -1,5 +1,5 @@
 const axios = require('axios')
-const Logger = require('../Logger')
+const logger = require('../logger')
 
 class AudiobookCovers {
   #responseTimeout = 10000
@@ -24,7 +24,7 @@ class AudiobookCovers {
       })
       .then((res) => res?.data || [])
       .catch((error) => {
-        Logger.error('[AudiobookCovers] Cover search error', error.message)
+        logger.error('[AudiobookCovers] Cover search error', error.message)
         return []
       })
     return items.map((item) => ({ cover: item.versions.png.original }))
