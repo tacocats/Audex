@@ -1,8 +1,9 @@
+import { writeFile } from 'fs/promises'
 import logger from '../logger.js'
 import { scanDirectory } from '../scanner.js'
 import { probeFiles } from '../probe.js'
 import { groupByBook } from '../grouper.js'
-import { findMetadata } from '../finder.js'
+import { resolveMetadata } from '../resolver.js'
 
 export async function organizeCommand(opts) {
   logger.level = opts.logLevel
@@ -16,10 +17,11 @@ export async function organizeCommand(opts) {
 
   const results = await Promise.all(
     books.map(async (book) => {
-      const metadata = await findMetadata(book.title, book.author, opts.provider)
+      const metadata = await resolveMetadata(book.title, book.author, opts.provider)
       return { ...book, metadata }
     })
   )
 
-  console.log(results[0])
+  await writeFile('out.txt', JSON.stringify(results, null, 2))
+  logger.info('Results written to out.txt')
 }

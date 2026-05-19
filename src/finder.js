@@ -11,18 +11,22 @@ const providers = {
   iTunes: new iTunes()
 }
 
+const MAX_CANDIDATES = 10
+
 const throttle = pThrottle({ limit: 2, interval: 1000 })
 
-export const findMetadata = throttle(async (title, author, providerName) => {
+// Returns up to MAX_CANDIDATES ranked-by-provider results so the resolver can
+// score them, instead of blindly trusting the first hit.
+export const searchMetadata = throttle(async (title, author, providerName) => {
   if (!title) {
     logger.debug(`[Finder] Skipping search — no title extracted`)
-    return null
+    return []
   }
 
   const provider = providers[providerName]
   if (!provider) {
     logger.debug(`[Finder] Unknown provider: ${providerName}`)
-    return null
+    return []
   }
 
   logger.debug(`[Finder] Searching ${providerName} for "${title}" by "${author}"`)
@@ -36,5 +40,10 @@ export const findMetadata = throttle(async (title, author, providerName) => {
     results = await provider.searchAudiobooks([title, author].filter(Boolean).join(' '))
   }
 
-  return results[0] ?? null
+  return (results ?? []).slice(0, MAX_CANDIDATES)
 })
+
+export async function findMetadata(title, author, providerName) {
+  const results = await searchMetadata(title, author, providerName)
+  return results[0] ?? null
+}
