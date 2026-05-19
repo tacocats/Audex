@@ -21,5 +21,13 @@ export default [
       'no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
       'import/no-unresolved': 'error'
     }
+  },
+  {
+    files: ['**/*.test.js'],
+    languageOptions: {
+      globals: {
+        ...globals.jest
+      }
+    }
   }
 ]
