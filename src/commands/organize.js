@@ -1,9 +1,12 @@
-import { writeFile } from 'fs/promises'
+import { mkdir, writeFile } from 'fs/promises'
+import path from 'path'
 import logger from '../logger.js'
 import { scanDirectory } from '../scanner.js'
 import { probeFiles } from '../probe.js'
 import { groupByBook } from '../grouper.js'
 import { resolveMetadata } from '../resolver.js'
+import { moveBook } from '../mover.js'
+import { writeNfo } from '../nfo.js'
 
 export async function organizeCommand(opts) {
   logger.level = opts.logLevel
@@ -22,6 +25,22 @@ export async function organizeCommand(opts) {
     })
   )
 
-  await writeFile('out.txt', JSON.stringify(results, null, 2))
-  logger.info('Results written to out.txt')
+  const matched = results.filter((r) => r.metadata !== null)
+  const skipped = results.filter((r) => r.metadata === null)
+
+  await mkdir(opts.output, { recursive: true })
+
+  for (const book of matched) {
+    const destDir = await moveBook(book, opts.output)
+    await writeNfo(book, destDir)
+  }
+
+  logger.info(`Organized ${matched.length} book(s)`)
+
+  if (skipped.length > 0) {
+    logger.warn(`${skipped.length} book(s) skipped — no confident metadata match`)
+    const skipData = skipped.map((b) => ({ title: b.title, author: b.author, files: b.files }))
+    await writeFile(path.join(opts.output, 'skipped.json'), JSON.stringify(skipData, null, 2))
+    logger.info('Skipped book list written to skipped.json in output directory')
+  }
 }
