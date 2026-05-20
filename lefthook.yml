@@ -1,0 +1,12 @@
+pre-push:
+  parallel: true
+  commands:
+    lint:
+      glob: "**/*.js"
+      run: npx eslint {push_files}
+    test:
+      glob: "**/*.js"
+      run: npm test -- --findRelatedTests --passWithNoTests {push_files}
+    typecheck:
+      glob: "**/*.js"
+      run: npm run typecheck
