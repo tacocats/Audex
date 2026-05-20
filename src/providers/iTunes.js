@@ -5,10 +5,11 @@ import { sanitize, stripAllTags } from '../utils/htmlSanitizer.js'
 /**
  * @typedef iTunesSearchParams
  * @property {string} term
- * @property {string} country
+ * @property {string} [country]
  * @property {string} media
  * @property {string} entity
- * @property {number} limit
+ * @property {number} [limit]
+ * @property {string} [lang]
  */
 
 /**
@@ -22,6 +23,7 @@ import { sanitize, stripAllTags } from '../utils/htmlSanitizer.js'
  * @property {string} releaseDate
  * @property {string[]} genres
  * @property {string} cover
+ * @property {number} trackCount
  * @property {string} feedUrl
  * @property {string} pageUrl
  * @property {boolean} explicit
@@ -42,7 +44,7 @@ class iTunes {
   search(options, timeout = this.#responseTimeout) {
     if (!options.term) {
       logger.error('[iTunes] Invalid search options - no term')
-      return []
+      return Promise.resolve([])
     }
     if (!timeout || isNaN(timeout)) timeout = this.#responseTimeout
 
@@ -157,7 +159,7 @@ class iTunes {
   /**
    *
    * @param {string} term
-   * @param {{country:string}} options
+   * @param {{country?: string}} [options]
    * @param {number} [timeout] response timeout in ms
    * @returns {Promise<iTunesPodcastSearchResult[]>}
    */
