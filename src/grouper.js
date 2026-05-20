@@ -1,5 +1,6 @@
 // Groups probed audio files into books by matching on shared album and author tags
 import { extractAlbum, extractTitle, extractAuthor } from './utils/tags.js'
+import logger from './logger.js'
 
 export function groupByBook(probed) {
   const books = new Map()
@@ -11,7 +12,7 @@ export function groupByBook(probed) {
     const author = extractAuthor(t)
 
     if (!bookTitle) {
-      console.log(`[grouper] skipped (no title/album): ${filePath}`)
+      logger.debug(`Skipped (no title/album): ${filePath}`)
       skipped++
       continue
     }
@@ -25,9 +26,9 @@ export function groupByBook(probed) {
     books.get(key).files.push(filePath)
   }
 
-  console.log(`[grouper] skipped ${skipped} file(s) with no title or album`)
+  if (skipped > 0) logger.warn(`Skipped ${skipped} file(s) with no title or album`)
   for (const [key, book] of books) {
-    console.log(`[grouper] "${key}" → ${book.files.length} file(s)`)
+    logger.debug(`"${key}" → ${book.files.length} file(s)`)
   }
 
   return Array.from(books.values())
