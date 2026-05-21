@@ -146,3 +146,13 @@ eval/run.js
 
 # Notes
 *.org
+
+# JetBrains IDEs
+.idea/.gitignore
+.idea/Audex.iml
+.idea/modules.xml
+.idea/prettier.xml
+.idea/vcs.xml
+.idea/codeStyles/codeStyleConfig.xml
+.idea/codeStyles/Project.xml
+.idea/inspectionProfiles/Project_Default.xml
