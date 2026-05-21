@@ -11,9 +11,7 @@ describe('titleSimilarity', () => {
   })
 
   it('scores a near-miss high', () => {
-    expect(titleSimilarity('Project Hail Mary', 'Project Hail Mary: A Novel')).toBeGreaterThan(
-      0.6
-    )
+    expect(titleSimilarity('Project Hail Mary', 'Project Hail Mary: A Novel')).toBeGreaterThan(0.6)
   })
 
   it('scores an unrelated title low', () => {
@@ -21,9 +19,7 @@ describe('titleSimilarity', () => {
   })
 
   it('tolerates token reordering via the Jaccard floor', () => {
-    expect(titleSimilarity('Golden Son Red Rising', 'Red Rising Golden Son')).toBeGreaterThan(
-      0.6
-    )
+    expect(titleSimilarity('Golden Son Red Rising', 'Red Rising Golden Son')).toBeGreaterThan(0.6)
   })
 })
 
@@ -36,11 +32,11 @@ describe('scoreCandidate', () => {
   it('author agreement lifts a borderline title match', () => {
     const withAuthor = scoreCandidate('Golden Son', 'Pierce Brown', {
       title: 'Golden Son: Book II',
-      author: 'Pierce Brown',
+      author: 'Pierce Brown'
     })
     const withoutAuthor = scoreCandidate('Golden Son', null, {
       title: 'Golden Son: Book II',
-      author: 'Pierce Brown',
+      author: 'Pierce Brown'
     })
     expect(withAuthor).toBeGreaterThan(withoutAuthor)
   })
@@ -48,11 +44,11 @@ describe('scoreCandidate', () => {
   it('wrong author drags the score down', () => {
     const right = scoreCandidate('Artemis', 'Andy Weir', {
       title: 'Artemis',
-      author: 'Andy Weir',
+      author: 'Andy Weir'
     })
     const wrong = scoreCandidate('Artemis', 'Andy Weir', {
       title: 'Artemis',
-      author: 'Someone Else',
+      author: 'Someone Else'
     })
     expect(wrong).toBeLessThan(right)
   })

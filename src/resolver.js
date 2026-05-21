@@ -33,14 +33,10 @@ export async function resolveMetadata(rawTitle, author, providerName) {
   }
 
   if (bestScore < MIN_THRESHOLD) {
-    logger.debug(
-      `[Resolver] No confident match for "${rawTitle}" (best ${bestScore.toFixed(2)})`
-    )
+    logger.debug(`[Resolver] No confident match for "${rawTitle}" (best ${bestScore.toFixed(2)})`)
     return null
   }
 
-  logger.debug(
-    `[Resolver] Matched "${rawTitle}" → "${best.title}" (tier ${bestTier}, score ${bestScore.toFixed(2)})`
-  )
+  logger.debug(`[Resolver] Matched "${rawTitle}" → "${best.title}" (tier ${bestTier}, score ${bestScore.toFixed(2)})`)
   return best
 }

@@ -8,7 +8,7 @@ describe('normalizeTitle', () => {
     it.each([
       ['', ''],
       [null, null],
-      [undefined, undefined],
+      [undefined, undefined]
     ])('returns %p unchanged', (input, expected) => {
       expect(normalizeTitle(input)).toBe(expected)
     })
@@ -25,8 +25,8 @@ describe('normalizeTitle', () => {
     it.each([
       ['Harry Potter꞉ X', 'Harry Potter: X'],
       ['Sorcerer’s', "Sorcerer's"],
-      ['‘a’ “b”', "'a' \"b\""],
-      ['x – y — z', 'x - y - z'],
+      ['‘a’ “b”', '\'a\' "b"'],
+      ['x – y — z', 'x - y - z']
     ])('folds %p', (input, expected) => {
       expect(foldUnicode(input)).toBe(expected)
     })
@@ -48,15 +48,13 @@ describe('normalizeTitle', () => {
       ['The Hobbit (Disc 2)', 'The Hobbit'],
       ['The Hobbit [CD1]', 'The Hobbit'],
       ['Some Title (US)', 'Some Title'],
-      ['Some Title [ENG]', 'Some Title'],
+      ['Some Title [ENG]', 'Some Title']
     ])('strips noise from %p', (input, expected) => {
       expect(stripBracketNoise(input).trim()).toBe(expected)
     })
 
     it('strips multiple stacked qualifiers', () => {
-      expect(
-        stripBracketNoise('Half-Blood Prince (Full-Cast Edition) (Unabridged)').trim()
-      ).toBe('Half-Blood Prince')
+      expect(stripBracketNoise('Half-Blood Prince (Full-Cast Edition) (Unabridged)').trim()).toBe('Half-Blood Prince')
     })
   })
 
@@ -69,7 +67,7 @@ describe('normalizeTitle', () => {
       ['Dungeon Crawler Carl: A LitRPG/Gamelit Adventure', 'Dungeon Crawler Carl'],
       ['World War Z: The Complete Edition: An Oral History', 'World War Z'],
       ['The Sandman: Act II', 'The Sandman: Act II'],
-      ['Orwell Collection: Animal Farm & 1984', 'Orwell Collection: Animal Farm & 1984'],
+      ['Orwell Collection: Animal Farm & 1984', 'Orwell Collection: Animal Farm & 1984']
     ])('%p → %p', (input, expected) => {
       expect(resolveColon(input)).toBe(expected)
     })
@@ -83,7 +81,7 @@ describe('normalizeTitle', () => {
       ['Mistborn Volume 3', 'Mistborn'],
       ['The Wheel of Time #3', 'The Wheel of Time'],
       ['Some Series Book One', 'Some Series'],
-      ['Some Series Book III', 'Some Series'],
+      ['Some Series Book III', 'Some Series']
     ])('%p → %p', (input, expected) => {
       expect(stripTrailingSeries(input)).toBe(expected)
     })
@@ -95,15 +93,13 @@ describe('normalizeTitle', () => {
       ['The Stormlight Archive Omnibus', 'The Stormlight Archive'],
       ['Foundation Boxed Set', 'Foundation'],
       ['Dune: The Complete Series', 'Dune'],
-      ['The Lord of the Rings Trilogy', 'The Lord of the Rings'],
+      ['The Lord of the Rings Trilogy', 'The Lord of the Rings']
     ])('%p → %p', (input, expected) => {
       expect(stripCollectionMarkers(input)).toBe(expected)
     })
 
     it('does not strip a bare "Collection" in a real title', () => {
-      expect(stripCollectionMarkers('Orwell Collection: Animal Farm & 1984')).toBe(
-        'Orwell Collection: Animal Farm & 1984'
-      )
+      expect(stripCollectionMarkers('Orwell Collection: Animal Farm & 1984')).toBe('Orwell Collection: Animal Farm & 1984')
     })
   })
 
@@ -112,7 +108,7 @@ describe('normalizeTitle', () => {
     it.each([
       ['The Stand Special Edition', 'The Stand'],
       ['It Deluxe Edition', 'It'],
-      ['Dune Collector’s Edition'.replace('’', "'"), 'Dune'],
+      ['Dune Collector’s Edition'.replace('’', "'"), 'Dune']
     ])('%p → %p', (input, expected) => {
       expect(stripBareEdition(input)).toBe(expected)
     })
@@ -122,23 +118,17 @@ describe('normalizeTitle', () => {
 
   describe('tier gating', () => {
     it('tier 0 only: folds + bracket strip, keeps subtitle', () => {
-      expect(normalizeTitle('The Sandman꞉ Act II (Unabridged)', { maxTier: 0 })).toBe(
-        'The Sandman: Act II'
-      )
+      expect(normalizeTitle('The Sandman꞉ Act II (Unabridged)', { maxTier: 0 })).toBe('The Sandman: Act II')
     })
 
     it('tier 1 (default): conservative colon/series handling', () => {
       expect(normalizeTitle('Red Rising Saga 2: Golden Son 2 of 2')).toBe('Golden Son')
       // ambiguous subtitle preserved at default tier
-      expect(normalizeTitle('The Quiet American: A Reckoning')).toBe(
-        'The Quiet American: A Reckoning'
-      )
+      expect(normalizeTitle('The Quiet American: A Reckoning')).toBe('The Quiet American: A Reckoning')
     })
 
     it('tier 2: aggressively drops any remaining subtitle', () => {
-      expect(
-        normalizeTitle('The Quiet American: A Reckoning', { maxTier: 2 })
-      ).toBe('The Quiet American')
+      expect(normalizeTitle('The Quiet American: A Reckoning', { maxTier: 2 })).toBe('The Quiet American')
     })
 
     it('tier 2 strips collection markers tier 1 leaves alone', () => {
@@ -183,7 +173,7 @@ describe('normalizeTitle', () => {
       ['Baptism of Fire (Unabridged)', 'Baptism of Fire'],
       ['World War Z: The Complete Edition (Movie Tie-in Edition): An Oral History of the Zombie War', 'World War Z'],
       ['There Is No Antimemetics Division', 'There Is No Antimemetics Division'],
-      ['Harry Potter and the Sorcerer’s Stone (Full-Cast Edition)', "Harry Potter and the Sorcerer's Stone"],
+      ['Harry Potter and the Sorcerer’s Stone (Full-Cast Edition)', "Harry Potter and the Sorcerer's Stone"]
     ])('%p → %p', (input, expected) => {
       expect(normalizeTitle(input)).toBe(expected)
     })

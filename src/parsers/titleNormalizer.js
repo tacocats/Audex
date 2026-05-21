@@ -16,7 +16,7 @@ const UNICODE_FOLDS = [
   [/꞉/g, ':'], // U+A789 modifier letter colon
   [/[’‘]/g, "'"],
   [/[“”]/g, '"'],
-  [/[–—]/g, '-'],
+  [/[–—]/g, '-']
 ]
 
 // Edition/format/credit noise inside ( ) or [ ].
@@ -31,12 +31,9 @@ const QUALIFIERS = [
   /(?:part\s+)?\d+\s+of\s+\d+/,
   /(?:disc|cd|tape)\s*\d+/,
   /[a-z]{2,3}/, // language/region tags: [ENG], (US), [DE]
-  /[^\])]+ edition/,
+  /[^\])]+ edition/
 ]
-const QUALIFIER_RE = new RegExp(
-  `\\s*[\\[(]\\s*(?:${QUALIFIERS.map((r) => r.source).join('|')})\\s*[\\])]`,
-  'gi'
-)
+const QUALIFIER_RE = new RegExp(`\\s*[\\[(]\\s*(?:${QUALIFIERS.map((r) => r.source).join('|')})\\s*[\\])]`, 'gi')
 
 // --- Tier 1 assets ---------------------------------------------------------
 
@@ -45,10 +42,7 @@ const TRAILING_PART_RE = /\s+\d+\s+of\s+\d+\s*$/i
 // Trailing series marker with no colon: "Skyward, Book 1", "Vol. 2", "#3",
 // word-number ("Book One"), Roman numeral ("Book III").
 const NUM_WORD = '(?:\\d+|one|two|three|four|five|six|seven|eight|nine|ten|[ivxlc]+)'
-const TRAILING_SERIES_RE = new RegExp(
-  `[\\s,:-]+(?:(?:book|volume|vol\\.?)\\s*${NUM_WORD}|#\\d+)\\s*$`,
-  'i'
-)
+const TRAILING_SERIES_RE = new RegExp(`[\\s,:-]+(?:(?:book|volume|vol\\.?)\\s*${NUM_WORD}|#\\d+)\\s*$`, 'i')
 
 // Left side of a colon that is a series label, e.g. "Red Rising Saga 2".
 const SERIES_LABEL_RE = /^.+\s+\d+$/
@@ -79,7 +73,7 @@ const GENRE_KEYWORDS = [
   'novella',
   'short story',
   'biography',
-  'history',
+  'history'
 ]
 const GENRE_SUBTITLE_RE = new RegExp(`^an?\\s+(?:${GENRE_KEYWORDS.join('|')})`, 'i')
 
@@ -87,11 +81,9 @@ const GENRE_SUBTITLE_RE = new RegExp(`^an?\\s+(?:${GENRE_KEYWORDS.join('|')})`, 
 
 // Standalone collection words only — NOT bare "Collection", so a real title
 // like "Orwell Collection: Animal Farm & 1984" survives.
-const COLLECTION_RE =
-  /[\s,:-]+(?:omnibus|box(?:ed)?\s+set|the\s+complete\s+series|trilogy|anthology)\s*$/i
+const COLLECTION_RE = /[\s,:-]+(?:omnibus|box(?:ed)?\s+set|the\s+complete\s+series|trilogy|anthology)\s*$/i
 
-const BARE_EDITION_RE =
-  /[\s,:-]+(?:special|deluxe|anniversary|collector'?s|extended|revised)\s+edition\s*$/i
+const BARE_EDITION_RE = /[\s,:-]+(?:special|deluxe|anniversary|collector'?s|extended|revised)\s+edition\s*$/i
 
 // --- Helpers ---------------------------------------------------------------
 
@@ -123,12 +115,12 @@ export const RULES = [
   {
     name: 'foldUnicode',
     tier: 0,
-    apply: (t) => UNICODE_FOLDS.reduce((s, [p, r]) => s.replace(p, r), t),
+    apply: (t) => UNICODE_FOLDS.reduce((s, [p, r]) => s.replace(p, r), t)
   },
   {
     name: 'stripBracketNoise',
     tier: 0,
-    apply: (t) => stripRepeat(t, QUALIFIER_RE).trim(),
+    apply: (t) => stripRepeat(t, QUALIFIER_RE).trim()
   },
   {
     name: 'resolveColon',
@@ -139,35 +131,31 @@ export const RULES = [
       // "Red Rising Saga 2: Golden Son" → keep the actual title
       if (SERIES_LABEL_RE.test(c.left)) return c.right
       // series info / nested-colon noise / known genre tag → keep left
-      if (
-        SERIES_SUFFIX_RE.test(c.right) ||
-        c.right.includes(':') ||
-        GENRE_SUBTITLE_RE.test(c.right)
-      ) {
+      if (SERIES_SUFFIX_RE.test(c.right) || c.right.includes(':') || GENRE_SUBTITLE_RE.test(c.right)) {
         return c.left
       }
       return t // legitimate subtitle ("The Sandman: Act II")
-    },
+    }
   },
   {
     name: 'stripTrailingPart',
     tier: 1,
-    apply: (t) => t.replace(TRAILING_PART_RE, ''),
+    apply: (t) => t.replace(TRAILING_PART_RE, '')
   },
   {
     name: 'stripTrailingSeries',
     tier: 1,
-    apply: (t) => t.replace(TRAILING_SERIES_RE, ''),
+    apply: (t) => t.replace(TRAILING_SERIES_RE, '')
   },
   {
     name: 'stripCollectionMarkers',
     tier: 2,
-    apply: (t) => t.replace(COLLECTION_RE, ''),
+    apply: (t) => t.replace(COLLECTION_RE, '')
   },
   {
     name: 'stripBareEdition',
     tier: 2,
-    apply: (t) => t.replace(BARE_EDITION_RE, ''),
+    apply: (t) => t.replace(BARE_EDITION_RE, '')
   },
   {
     name: 'stripGenericSubtitle',
@@ -175,8 +163,8 @@ export const RULES = [
     apply: (t) => {
       const c = splitColon(t)
       return c ? c.left : t
-    },
-  },
+    }
+  }
 ]
 
 export function normalizeTitle(title, { maxTier = 1 } = {}) {

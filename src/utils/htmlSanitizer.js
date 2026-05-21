@@ -7,7 +7,7 @@ export function sanitize(html) {
     disallowedTagsMode: 'discard',
     allowedAttributes: { a: ['href', 'name', 'target'] },
     allowedSchemes: ['http', 'https', 'mailto'],
-    allowProtocolRelative: false,
+    allowProtocolRelative: false
   })
 }
 

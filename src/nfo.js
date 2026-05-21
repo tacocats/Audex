@@ -2,12 +2,7 @@ import { writeFile } from 'fs/promises'
 import path from 'path'
 
 function escapeXml(str) {
-  return String(str)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&apos;')
+  return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;')
 }
 
 export async function writeNfo(book, destDir) {
@@ -15,16 +10,18 @@ export async function writeNfo(book, destDir) {
   const lines = []
 
   lines.push('<?xml version="1.0" encoding="UTF-8"?>')
-  lines.push('<root xmlns="NFOStandard" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="NFOStandard https://xsd.nfostandard.com/v2/main.xsd">')
+  lines.push(
+    '<root xmlns="NFOStandard" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="NFOStandard https://xsd.nfostandard.com/v2/main.xsd">'
+  )
   lines.push('  <media>')
   lines.push('    <audiobook>')
 
-  if (m.title)         lines.push(`      <title>${escapeXml(m.title)}</title>`)
+  if (m.title) lines.push(`      <title>${escapeXml(m.title)}</title>`)
   if (m.publishedYear) lines.push(`      <releaseDate>${escapeXml(m.publishedYear)}-01-01</releaseDate>`)
-  if (m.publisher)     lines.push(`      <productionCompany>${escapeXml(m.publisher)}</productionCompany>`)
-  if (m.isbn)          lines.push(`      <isbn>${escapeXml(m.isbn)}</isbn>`)
+  if (m.publisher) lines.push(`      <productionCompany>${escapeXml(m.publisher)}</productionCompany>`)
+  if (m.isbn) lines.push(`      <isbn>${escapeXml(m.isbn)}</isbn>`)
   if (m.duration != null) lines.push(`      <duration>${Math.round(m.duration * 60)}</duration>`)
-  if (m.language)      lines.push(`      <language>${escapeXml(m.language)}</language>`)
+  if (m.language) lines.push(`      <language>${escapeXml(m.language)}</language>`)
 
   for (const genre of m.genres ?? []) {
     lines.push(`      <genre>${escapeXml(genre)}</genre>`)
