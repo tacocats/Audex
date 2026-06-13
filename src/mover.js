@@ -4,6 +4,7 @@ import { pipeline } from 'stream/promises'
 import path from 'path'
 import logger from './logger.js'
 
+// eslint-disable-next-line no-control-regex
 const INVALID_PATH_CHARS = /[<>:"/\\|?*\x00]/g
 
 function sanitize(str) {
