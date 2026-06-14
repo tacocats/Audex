@@ -11,6 +11,8 @@
     "format": "prettier --write bin src",
     "format:check": "prettier --check bin src",
     "test": "NODE_OPTIONS=--experimental-vm-modules jest",
+    "test:unit": "NODE_OPTIONS=--experimental-vm-modules jest src/",
+    "test:integration": "NODE_OPTIONS=--experimental-vm-modules jest tests/",
     "test:coverage": "NODE_OPTIONS=--experimental-vm-modules jest --coverage",
     "typecheck": "tsc --noEmit",
     "eval": "node eval/run.js"
