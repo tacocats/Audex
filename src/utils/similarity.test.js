@@ -21,6 +21,15 @@ describe('titleSimilarity', () => {
   it('tolerates token reordering via the Jaccard floor', () => {
     expect(titleSimilarity('Golden Son Red Rising', 'Red Rising Golden Son')).toBeGreaterThan(0.6)
   })
+
+  it('handles single-token titles without bigrams', () => {
+    expect(titleSimilarity('Dune', 'Dune')).toBe(1)
+    expect(titleSimilarity('Dune', 'Foundation')).toBeLessThan(0.5)
+  })
+
+  it('normalises Unicode via NFKD before comparing', () => {
+    expect(titleSimilarity('café', 'café')).toBe(1)
+  })
 })
 
 describe('scoreCandidate', () => {
