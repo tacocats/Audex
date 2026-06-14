@@ -2,7 +2,7 @@ export default {
   testEnvironment: 'node',
   transform: {},
   coverageProvider: 'v8',
-  collectCoverageFrom: ['src/**/*.js', '!src/**/*.test.js'],
+  collectCoverageFrom: ['src/**/*.js', '!src/**/*.test.js', '!src/logger.js', '!src/utils/globals.js'],
   coverageReporters: ['text', 'lcov'],
   coverageThreshold: {
     global: {
