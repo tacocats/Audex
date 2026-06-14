@@ -22,6 +22,11 @@ Commands:
 ```
 
 ```
+audex organize -i /mnt/storage/Audiobooks -o /mnt/storage/test
+```
+
+## Development run
+```
 npm run start -- organize -i /mnt/storage/Audiobooks -o /mnt/storage/test
 ```
 
