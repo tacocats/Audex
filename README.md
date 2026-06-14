@@ -1,8 +1,17 @@
 # Audex
 
+[![npm version](https://img.shields.io/npm/v/@tacocats/audex)](https://www.npmjs.com/package/@tacocats/audex)
+
 Organize your audibook libraries following the Audiobookshelf directory structure 
 
-## Running 
+## Installing
+
+```
+npm install -g @tacocats/audex
+```
+
+## Usage
+
 ```
 Usage: audex [options] [command]
 
