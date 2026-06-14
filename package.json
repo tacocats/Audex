@@ -1,7 +1,7 @@
 {
-  "name": "audex",
+  "name": "@tacocats/audex",
   "version": "1.0.0",
-  "description": "",
+  "description": "Organize your audiobook libraries following the Audiobookshelf directory structure",
   "bin": {
     "audex": "./bin/cli.js"
   },
@@ -19,9 +19,22 @@
     "type": "git",
     "url": "git+https://github.com/tacocats/Audex.git"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "audiobook",
+    "organizer",
+    "cli",
+    "metadata",
+    "nfo"
+  ],
+  "author": "tacocats",
   "license": "ISC",
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "bin/",
+    "src/"
+  ],
   "type": "module",
   "bugs": {
     "url": "https://github.com/tacocats/Audex/issues"
